@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoryVerse - Home</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f8edea, #ffffff);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fdf2ef;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 0.2rem 1rem;
+    }
+    .navbar h1 {
+      color: #d29578;
+      font-size: 1.8rem;
+    }
+    .navbar nav {
+  display: flex;
+  justify-content: space-between;
+ 
+}
+    .navbar nav a {
+      margin: 0 1rem;
+      color: #555;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .navbar nav a:hover {
+      color: #d29578;
+    }
+    .navbar form {
+      margin-left: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .navbar input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .navbar button {
+      background-color: #d29578;
+      color: white;
+      border: none;
+      padding: 0.6rem;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .navbar button:hover {
+      background-color: #b67a59;
+    }
+    #home-link {
+  color: #555; /* Default color */
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+#home-link:hover {
+  color: #d29578 !important;
+  transform: scale(1.1) !important;
+}
+    .hero {
+      text-align: center;
+     
+      padding: 12rem 2rem;
+     
+      background-image: url('https://i.pinimg.com/736x/20/c8/f1/20c8f1e4e08799bef736da87324e9b37.jpg');
+      background-repeat: no-repeat;
+     background-size: cover;
+     background-color: #fdf2ef;
+    }
+    .hero h2 {
+      color: white;
+      font-size: 2.5rem;
+    }
+    .hero p {
+      color: white;
+      margin: 1rem 0;
+      font-size: 1.2rem;
+    }
+    .articles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+    .article-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    .article-card:hover {
+      transform: translateY(-5px);
+    }
+    .article-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .article-content {
+      padding: 1rem;
+    }
+    .article-content h3 {
+      color: #333;
+      font-size: 1.5rem;
+    }
+    .article-content p {
+      color: #777;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    .article-content a {
+      text-decoration: none;
+      color: #d29578;
+      font-weight: bold;
+    }
+    .article-content a:hover {
+      text-decoration: underline;
+    }
+    .sidebar {
+            padding: 1rem;
+            background-color: #f9f9f9;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: black;
+        }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <h1>StoryVerse</h1>
+    <nav>
+      <a href="#" id="home-link">Home</a>
+      <a href="#">Articles</a>
+      <a href="#">Categories</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      
+    </nav>
+    <form action="#" method="get">
+        <input type="text" placeholder="Search articles..." name="search">
+        <button type="submit">Search</button>
+      </form>
+  </header>
+
+  <section class="hero">
+    <h2>Welcome to StoryVerse</h2>
+    <p>Embark on a journey through endless articles,
+        inspiring stories, and unforgettable reads, all crafted just for you</p>
+
+   
+  </section>
+
+  <section class="articles">
+    <div class="article-card">
+      <img src="https://th.bing.com/th/id/OIP.k92EHqq7zZyjf0nuPAAlZwAAAA?rs=1&pid=ImgDetMain" alt="Article 1">
+      <div class="article-content">
+        <h3>The Magic of Storytelling</h3>
+        <p>Explore the wonders of storytelling in this exciting article.</p>
+        <p>Published: January 15, 2024</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+
+    <div class="article-card">
+      <img src="https://th.bing.com/th/id/OIP.QxcoaAZNhG3P55rsWVd-8AAAAA?rs=1&pid=ImgDetMain" alt="Article 2">
+      <div class="article-content">
+        <h3>The Art of Storytelling</h3>
+        <p>Uncover the secrets to crafting compelling narratives.</p>
+        <p>Published: February 5, 2024</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+
+    <div class="article-card">
+      <img src="https://th.bing.com/th/id/OIP.WfSc2l3m1o0KZvW0woBwcQHaEK?rs=1&pid=ImgDetMain" alt="Article 3">
+      <div class="article-content">
+        <h3>Mastering the Craft</h3>
+        <p>Learn from experts about the art of storytelling.</p>
+        <p>Published: March 10, 2024</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+     <!-- Sidebar -->
+     <aside class="sidebar">
+        <h2>Latest Blogs</h2>
+        <ul>
+            <li><a href="#">Making wearable medical devices...</a></li>
+            <li><a href="#">Rainforest raises $15M...</a></li>
+            <!-- Add more links -->
+        </ul>
+    </aside>
+  </section>
+</body>
+</html>

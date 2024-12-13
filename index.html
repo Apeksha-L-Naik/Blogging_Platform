@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - StoryVerse</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <!-- Left Section: Welcome Message -->
+    <div id="welcomeSection" class="login-left">
+      <h1>Welcome to <span class="highlight">StoryVerse</span></h1>
+      <p>Dive into a world of unlimited articles, inspiring stories, and engaging reads curated just for you.</p>
+      <img src="7bapnfen.jpg" alt="Reading Articles Illustration" class="blog-image" height="250px">
+    </div>
+    
+    <!-- Right Section: Login Form -->
+    <div id="loginPage" class="login-right">
+      <form id="loginForm" class="login-form">
+        <h2>Login to Explore</h2>
+       
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <div class="input-group">
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            
+            <option value="author">Author</option>
+            <option value="reader">Reader</option>
+          </select>
+        </div>
+        <button type="submit" class="login-btn">Sign in</button> 
+        <div class="links">
+          <a href="#" id="forgotPassword">Forgot Password?</a>
+          <a href="#" id="createAccount">Create an Account</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Create Account Form -->
+    <div id="joinSection" class="login-left hidden">
+      <h1>Join <span class="highlight">StoryVerse</span></h1>
+      <p>Create your account to explore inspiring articles and stories.</p>
+      <img src="7bapnfen.jpg" alt="Create Account Illustration" class="blog-image" height="250px">
+    </div>
+    
+    <div id="signUpPage" class="login-right hidden">
+      
+      <form id="createAccountForm" class="signup-form">
+        <h2>Create Account</h2>
+        <div class="input-group">
+          <label for="newEmail">Email</label>
+          <input type="email" id="newEmail" name="newEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="input-group">
+          <label for="newPassword">Password</label>
+          <input type="password" id="newPassword" name="newPassword" placeholder="Enter a strong password" required>
+        </div>
+        <div class="input-group">
+          <label for="newRole">Role</label>
+          <select id="newRole" name="newRole" required>
+            <option value="author">Author</option>
+            <option value="reader">Reader</option>
+          </select>
+        </div>
+        <button type="submit" class="login-btn">Sign Up</button>
+        <div class="links">
+          <a href="#" id="backToLoginFromSignUp">Back to Login</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Reset Password Form -->
+    <div id="resetPasswordPage" class="login-right hidden">
+      <form id="resetPasswordForm" class="reset-form">
+        <h2>Reset Password</h2>
+        <div class="input-group">
+          <label for="resetEmail">Email</label>
+          <input type="email" id="resetEmail" name="resetEmail" placeholder="Enter your email" required>
+        </div>
+        <button type="submit" class="login-btn-reset">Reset Password</button>
+        <div class="links">
+          <a href="#" id="backToLoginFromReset">Back to Login</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const loginPage = document.getElementById("loginPage");
+    const signUpPage = document.getElementById("signUpPage");
+    const resetPasswordPage = document.getElementById("resetPasswordPage");
+
+    const createAccountLink = document.getElementById("createAccount");
+    const forgotPasswordLink = document.getElementById("forgotPassword");
+    const backToLoginFromSignUp = document.getElementById("backToLoginFromSignUp");
+    const backToLoginFromReset = document.getElementById("backToLoginFromReset");
+
+    // Dummy user data for validation
+    const users = [{ email: "user@example.com", password: "password123", role: "reader" }];
+
+    // Show Sign Up page
+    createAccountLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      loginPage.classList.add("hidden");
+      welcomeSection.classList.add("hidden");
+      signUpPage.classList.remove("hidden");
+      joinSection.classList.remove("hidden");
+    });
+
+
+    // Show Reset Password page
+    forgotPasswordLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      loginPage.classList.add("hidden");
+      resetPasswordPage.classList.remove("hidden");
+    });
+
+    // Back to Login from Sign Up
+    backToLoginFromSignUp.addEventListener("click", (e) => {
+      e.preventDefault();
+      signUpPage.classList.add("hidden");
+      joinSection.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+      welcomeSection.classList.remove("hidden");
+    });
+
+    // Back to Login from Reset Password
+    backToLoginFromReset.addEventListener("click", (e) => {
+      e.preventDefault();
+      resetPasswordPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+    });
+
+    // Handle Login Form Submission
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+
+      const user = users.find((user) => user.email === email && user.password === password && user.role === role);
+      if (user) {
+        alert(`Login successful as ${role}! Redirecting to homepage...`);
+        window.location.href = "home.html"; // Replace with your homepage URL
+      } else {
+        alert("Invalid email, password, or role.");
+      }
+    });
+
+    // Handle Create Account Form Submission
+    document.getElementById("createAccountForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newEmail = document.getElementById("newEmail").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const newRole = document.getElementById("newRole").value;
+
+      users.push({ email: newEmail, password: newPassword, role: newRole });
+      alert("Account created successfully! You can now log in.");
+      signUpPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+
+     
+      
+    });
+
+    // Handle Reset Password Form Submission
+    document.getElementById("resetPasswordForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const resetEmail = document.getElementById("resetEmail").value;
+
+      const user = users.find((user) => user.email === resetEmail);
+      if (user) {
+        alert("Password reset link has been sent to your email.");
+      } else {
+        alert("Email not found.");
+      }
+    });
+
+  
+
+
+  </script>
+</body>
+</html>
