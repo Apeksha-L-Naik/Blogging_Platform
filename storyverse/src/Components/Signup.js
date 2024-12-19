@@ -21,7 +21,7 @@ const Signup = () => {
         try {
             const response = await axios.post('http://localhost:5000/signup', formData);
             alert(response.data);
-            navigate('/login'); // Redirect to login page after signup
+            navigate('/'); // Redirect to login page after signup
         } catch (error) {
             alert(error.response?.data || 'An error occurred');
         }

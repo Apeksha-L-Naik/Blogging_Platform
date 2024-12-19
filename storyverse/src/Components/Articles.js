@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Articles = () => {
     const [articles, setArticles] = useState([]);
 
-    // Fetch all articles on component mount
     useEffect(() => {
         const fetchArticles = async () => {
             try {
@@ -21,24 +21,27 @@ const Articles = () => {
         <div>
             <h2>Articles</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {articles.map((articles) => (
-    <div
-        key={articles.article_id}  // Use article_id as the key
-        style={{
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            padding: '16px',
-            width: '300px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        }}
-    >
-        <h3>{articles.title}</h3>
-        <p>{articles.content.substring(0, 100)}...</p>
-        <p style={{ fontStyle: 'italic', color: 'gray' }}>
-            By: {articles.author_name}  {/* Ensure 'author_name' exists in the DB */}
-        </p>
-    </div>
-))}
+                {articles.map((article) => (
+                    <div
+                        key={article.article_id}
+                        style={{
+                            border: '1px solid #ddd',
+                            borderRadius: '8px',
+                            padding: '16px',
+                            width: '300px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                        }}
+                    >
+                        <h3>{article.title}</h3>
+                        <p>{article.content.substring(0, 100)}...</p>
+                        <p style={{ fontStyle: 'italic', color: 'gray' }}>
+                            By: {article.author_name}
+                        </p>
+                        <Link to={`/articles/${article.article_id}`}>
+            <button style={{ marginTop: '10px' }}>Read More</button>
+        </Link>
+                    </div>
+                ))}
             </div>
         </div>
     );

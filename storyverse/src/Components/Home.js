@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Articles from './Articles';
 
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
-    const [authorData, setAuthorData] = useState({
-        totalArticles: 0,
-        totalComments: 0,
-        totalViews: 0,
-    });
+    const [authorName, setAuthorName] = useState('');
     const [newArticle, setNewArticle] = useState({ title: '', content: '' });
     const [isAuthorDashboardVisible, setIsAuthorDashboardVisible] = useState(false);
     const navigate = useNavigate();
@@ -28,7 +24,7 @@ const Home = () => {
             .then((response) => {
                 setUserRole(response.data.role);
                 if (response.data.role === 'author') {
-                    fetchAuthorData(token);
+                    fetchAuthorName(token);
                 }
             })
             .catch(() => {
@@ -38,14 +34,18 @@ const Home = () => {
             });
     }, [navigate]);
 
-    const fetchAuthorData = async (token) => {
+    const fetchAuthorName = async (token) => {
         try {
-            const response = await axios.get('http://localhost:5000/author-stats', {
+            const response = await axios.get('http://localhost:5000/author-name', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setAuthorData(response.data);
+            if (response.data && response.data.name) {
+                setAuthorName(response.data.name);
+            } else {
+                console.error('Author name not found in the response:', response.data);
+            }
         } catch (error) {
-            console.error('Error fetching author data:', error);
+            console.error('Error fetching author name:', error);
         }
     };
 
@@ -53,6 +53,7 @@ const Home = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
+            console.log('Token:', token);  // Log the token to make sure it's valid
             await axios.post(
                 'http://localhost:5000/upload-article',
                 newArticle,
@@ -60,15 +61,16 @@ const Home = () => {
             );
             alert('Article uploaded successfully!');
             setNewArticle({ title: '', content: '' });
-            fetchAuthorData(token);
+    
         } catch (error) {
-            alert('Error uploading article: ' + error.response?.data || 'Server error');
+            alert('Error uploading article: ' + (error.response?.data || error.message || 'Server error'));
         }
     };
+    
+    
 
     return (
         <div>
-            <h1>Welcome to the Home Page</h1>
             {userRole === 'author' && (
                 <button
                     style={{
@@ -90,37 +92,32 @@ const Home = () => {
 
             {isAuthorDashboardVisible ? (
                 <div>
+                <div>
                     <h2>Author Dashboard</h2>
-                    <p>Total Articles Published: {authorData.totalArticles}</p>
-                    <p>Total Comments: {authorData.totalComments}</p>
-                    <p>Total Views: {authorData.totalViews}</p>
-                    
-                    <h3>Upload New Article</h3>
-                    <form onSubmit={handleArticleSubmit}>
-                        <input
-                            name="title"
-                            placeholder="Article Title"
-                            value={newArticle.title}
-                            onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
-                            required
-                        />
-                        <textarea
-                            name="content"
-                            placeholder="Article Content"
-                            value={newArticle.content}
-                            onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
-                            required
-                        />
-                        <button type="submit">Upload Article</button>
-                    </form>
+                    <p><strong>Name:</strong> {authorName|| 'N/A'}</p>
+                </div>
+                <h3>Upload New Article</h3>
+                <form onSubmit={handleArticleSubmit}>
+                    <input
+                        name="title"
+                        placeholder="Article Title"
+                        value={newArticle.title}
+                        onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
+                        required
+                    />
+                    <textarea
+                        name="content"
+                        placeholder="Article Content"
+                        value={newArticle.content}
+                        onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
+                        required
+                    />
+                    <button type="submit">Upload Article</button>
+                </form>
                 </div>
             ) : (
                 <div>
-                    {/* <h2>Explore</h2>
-                    <Link to="/articles">
-                        <button>Browse Articles</button>
-                    </Link> */}
-                    <Articles/>
+                    <Articles />
                 </div>
             )}
         </div>
