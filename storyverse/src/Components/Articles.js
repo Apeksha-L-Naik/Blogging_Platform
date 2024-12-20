@@ -32,8 +32,23 @@ const Articles = () => {
                             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                         }}
                     >
+                        {article.cover_image_url && (
+    <img
+        src={`http://localhost:5000/${article.cover_image_url}`}
+        alt="Cover"
+        style={{
+            width: '100%',
+            height: '150px',
+            objectFit: 'cover',
+            borderRadius: '8px',
+            marginBottom: '10px',
+        }}
+    />
+)}
+
+
                         <h3>{article.title}</h3>
-                        <p>{article.content.substring(0, 100)}...</p>
+
                         <p style={{ fontStyle: 'italic', color: 'gray' }}>
                             By: {article.author_name}
                         </p>

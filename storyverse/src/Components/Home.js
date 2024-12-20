@@ -5,9 +5,10 @@ import Articles from './Articles';
 
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
-    const [authorName, setAuthorName] = useState('');
-    const [newArticle, setNewArticle] = useState({ title: '', content: '' });
+    const [newArticle, setNewArticle] = useState({ title: '', content: '', categories: '' });
+    const [coverImage, setCoverImage] = useState(null); // New state for the cover image
     const [isAuthorDashboardVisible, setIsAuthorDashboardVisible] = useState(false);
+    const [authorName, setAuthorName] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,23 +52,31 @@ const Home = () => {
 
     const handleArticleSubmit = async (e) => {
         e.preventDefault();
+        const categoriesArray = newArticle.categories.split(',').map((category) => category.trim());
+        const formData = new FormData(); // Create a FormData object for file uploads
+
+        formData.append('title', newArticle.title);
+        formData.append('content', newArticle.content);
+        formData.append('categories', JSON.stringify(categoriesArray));
+        if (coverImage) {
+            formData.append('coverImage', coverImage); // Add cover image file
+        }
+
         try {
             const token = localStorage.getItem('token');
-            console.log('Token:', token);  // Log the token to make sure it's valid
-            await axios.post(
-                'http://localhost:5000/upload-article',
-                newArticle,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            alert('Article uploaded successfully!');
-            setNewArticle({ title: '', content: '' });
-    
+            await axios.post('http://localhost:5000/upload-article', formData, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            alert('Article and cover image uploaded successfully!');
+            setNewArticle({ title: '', content: '', categories: '' });
+            setCoverImage(null); // Reset cover image
         } catch (error) {
             alert('Error uploading article: ' + (error.response?.data || error.message || 'Server error'));
         }
     };
-    
-    
 
     return (
         <div>
@@ -92,28 +101,40 @@ const Home = () => {
 
             {isAuthorDashboardVisible ? (
                 <div>
-                <div>
-                    <h2>Author Dashboard</h2>
-                    <p><strong>Name:</strong> {authorName|| 'N/A'}</p>
-                </div>
-                <h3>Upload New Article</h3>
-                <form onSubmit={handleArticleSubmit}>
-                    <input
-                        name="title"
-                        placeholder="Article Title"
-                        value={newArticle.title}
-                        onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
-                        required
-                    />
-                    <textarea
-                        name="content"
-                        placeholder="Article Content"
-                        value={newArticle.content}
-                        onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
-                        required
-                    />
-                    <button type="submit">Upload Article</button>
-                </form>
+                    <div>
+                        <h2>Author Dashboard</h2>
+                        <p><strong>Name:</strong> {authorName || 'N/A'}</p>
+                    </div>
+                    <h3>Upload New Article</h3>
+                    <form onSubmit={handleArticleSubmit}>
+                        <input
+                            name="title"
+                            placeholder="Article Title"
+                            value={newArticle.title}
+                            onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
+                            required
+                        />
+                        <textarea
+                            name="content"
+                            placeholder="Article Content"
+                            value={newArticle.content}
+                            onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
+                            required
+                        />
+                        <textarea
+                            name="categories"
+                            placeholder="Enter categories separated by commas (e.g., tech, health, science)"
+                            value={newArticle.categories}
+                            onChange={(e) => setNewArticle({ ...newArticle, categories: e.target.value })}
+                            required
+                        />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setCoverImage(e.target.files[0])} // Handle file input
+                        />
+                        <button type="submit">Upload Article</button>
+                    </form>
                 </div>
             ) : (
                 <div>

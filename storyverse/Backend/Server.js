@@ -223,48 +223,54 @@ app.get('/author-name', async (req, res) => {
 
 
 
-app.post('/upload-article', (req, res) => {
+app.post('/upload-article', upload.single('coverImage'), (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
-        console.log('Decoded JWT:', decoded);
 
         if (decoded.role !== 'author') {
             return res.status(403).send('Access denied');
         }
 
-        // Check if author exists in the database
-        const checkAuthorQuery = 'SELECT * FROM author WHERE author_id = ?';
-        db.execute(checkAuthorQuery, [decoded.id])
-            .then(([rows]) => {
-                if (rows.length === 0) {
-                    return res.status(404).send('Author not found');
-                }
+        const { title, content, categories } = req.body;
+        const coverImagePath = req.file?.path; // Get the path of the uploaded image
 
-                const { title, content } = req.body;
-                const query = 'INSERT INTO articles (title, content, author_id) VALUES (?, ?, ?)';
-                db.execute(query, [title, content, decoded.id])
-                    .then(() => res.status(201).send('Article uploaded successfully'))
-                    .catch((err) => {
-                        console.error('Database error:', err);
-                        res.status(500).send('Error uploading article');
-                    });
+        if (!title || !content || !categories) {
+            return res.status(400).send('Title, content, and categories are required');
+        }
+
+        const parsedCategories = JSON.parse(categories);
+
+        db.execute('INSERT INTO articles (title, content, author_id, cover_image_url) VALUES (?, ?, ?, ?)', [
+            title,
+            content,
+            decoded.id,
+            coverImagePath,
+        ])
+            .then(async ([articleResult]) => {
+                const categoryInsertQueries = parsedCategories.map((category) =>
+                    db.execute('INSERT INTO categories (name, article_id) VALUES (?, ?)', [category, articleResult.insertId])
+                );
+
+                await Promise.all(categoryInsertQueries);
+                res.status(200).send({ message: 'Article and cover image uploaded successfully' });
             })
             .catch((err) => {
-                console.error('Error checking author:', err);
-                res.status(500).send('Error checking author');
+                console.error('Database error:', err);
+                res.status(500).send('Error uploading article');
             });
     } catch (err) {
         console.error('JWT Error:', err);
-        return res.status(401).send('Invalid or expired token');
+        res.status(401).send('Invalid or expired token');
     }
 });
 
 
+
 app.get('/articles', (req, res) => {
     const query = `
-        SELECT articles.article_id, articles.title, articles.content, author.author_name AS author_name
+        SELECT articles.article_id, articles.title,articles.cover_image_url,author.author_name AS author_name
         FROM articles
         JOIN author ON articles.author_id = author.author_id
     `;
