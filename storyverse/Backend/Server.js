@@ -289,7 +289,7 @@ app.get('/articles', (req, res) => {
 app.get('/article/:id', (req, res) => {
     const articleId = req.params.id;
     const query = `
-        SELECT articles.article_id, articles.title, articles.content, author.author_name AS author_name
+        SELECT articles.article_id, articles.title, articles.content,articles.cover_image_url ,author.author_name AS author_name
         FROM articles
         JOIN author ON articles.author_id = author.author_id
         WHERE articles.article_id = ?

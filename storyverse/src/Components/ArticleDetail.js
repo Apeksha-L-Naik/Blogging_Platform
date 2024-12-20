@@ -92,6 +92,17 @@ const ArticleDetails = () => {
         <div style={{ padding: '20px' }}>
             <h2>{article.title}</h2>
             <p style={{ fontStyle: 'italic', color: 'gray' }}>By: {article.author_name}</p>
+            <img
+                                src={`http://localhost:5000/${article.cover_image_url}`}
+                                alt="Cover"
+                                style={{
+                                    width: '100%',
+                                    height: '350px',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                    marginBottom: '10px',
+                                }}
+                            />
             <div style={{ marginTop: '20px' }}>
                 <p>{article.content}</p>
             </div>
