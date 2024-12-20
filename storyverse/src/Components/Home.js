@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Articles from './Articles';
+import Navbar from './Navbar';
 
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
     const [newArticle, setNewArticle] = useState({ title: '', content: '', categories: '' });
-    const [coverImage, setCoverImage] = useState(null); // New state for the cover image
+    const [coverImage, setCoverImage] = useState(null);
     const [isAuthorDashboardVisible, setIsAuthorDashboardVisible] = useState(false);
     const [authorName, setAuthorName] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,26 +55,26 @@ const Home = () => {
     const handleArticleSubmit = async (e) => {
         e.preventDefault();
         const categoriesArray = newArticle.categories.split(',').map((category) => category.trim());
-        const formData = new FormData(); // Create a FormData object for file uploads
+        const formData = new FormData();
 
         formData.append('title', newArticle.title);
         formData.append('content', newArticle.content);
         formData.append('categories', JSON.stringify(categoriesArray));
         if (coverImage) {
-            formData.append('coverImage', coverImage); // Add cover image file
+            formData.append('coverImage', coverImage);
         }
 
         try {
             const token = localStorage.getItem('token');
             await axios.post('http://localhost:5000/upload-article', formData, {
-                headers: { 
+                headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
             alert('Article and cover image uploaded successfully!');
             setNewArticle({ title: '', content: '', categories: '' });
-            setCoverImage(null); // Reset cover image
+            setCoverImage(null);
         } catch (error) {
             alert('Error uploading article: ' + (error.response?.data || error.message || 'Server error'));
         }
@@ -80,6 +82,8 @@ const Home = () => {
 
     return (
         <div>
+            <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
             {userRole === 'author' && (
                 <button
                     style={{
@@ -131,14 +135,14 @@ const Home = () => {
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => setCoverImage(e.target.files[0])} // Handle file input
+                            onChange={(e) => setCoverImage(e.target.files[0])}
                         />
                         <button type="submit">Upload Article</button>
                     </form>
                 </div>
             ) : (
                 <div>
-                    <Articles />
+                    <Articles searchQuery={searchQuery} />
                 </div>
             )}
         </div>
