@@ -161,17 +161,64 @@ app.get('/author-name', async (req, res) => {
         const decoded = jwt.verify(token, SECRET_KEY); // Use your secret key here
         const authorId = decoded.id; // Use decoded.id as user_id
 
-        // Query the database for author's name based on authorId
-        const [author] = await db.query('SELECT author_name FROM author WHERE user_id = ?', [authorId]);
+        // Query the database for author's details (name, bio, profile_picture) and article count
+        const [author] = await db.query(
+            'SELECT author_name, bio, profile_picture FROM author WHERE user_id = ?',
+            [authorId]
+        );
 
         if (author.length === 0) {
             return res.status(404).json({ error: 'Author not found' });
         }
 
-        // Ensure the property is returned as 'name' for consistency with frontend
-        res.json({ name: author[0].author_name });
+        // Query to get the article count
+        const [articleCountResult] = await db.query(
+            'SELECT COUNT(*) AS article_count FROM articles WHERE author_id = ?',
+            [authorId]
+        );
+
+        const articleCount = articleCountResult[0].article_count;
+
+        // Send the author details along with article count in the response
+        res.json({
+            name: author[0].author_name,
+            bio: author[0].bio || '', // Default to an empty string if bio is null
+            profilePicture: author[0].profile_picture || '', // Default to an empty string if no picture
+            articleCount, // Add article count to the response
+        });
     } catch (err) {
-        console.error('Error fetching author name:', err);
+        console.error('Error fetching author details:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
+app.post('/update-profile', upload.single('profilePicture'), async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Decode the token to extract user info
+        const decoded = jwt.verify(token, SECRET_KEY); // Use your secret key
+        const authorId = decoded.id; // Use decoded.id as user_id
+
+        // Extract bio and profile picture from the request
+        const { bio } = req.body;
+        const profilePicture = req.file?.path;
+
+        // Update the author's profile in the database
+        const updateQuery = `
+            UPDATE author
+            SET bio = ?, profile_picture = ?
+            WHERE user_id = ?
+        `;
+        await db.query(updateQuery, [bio, profilePicture, authorId]);
+
+        res.json({ success: true, message: 'Profile updated successfully!' });
+    } catch (err) {
+        console.error('Error updating profile:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
