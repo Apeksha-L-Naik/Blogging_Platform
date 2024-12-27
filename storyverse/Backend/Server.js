@@ -355,31 +355,30 @@ app.get('/article/:id', (req, res) => {
         });
 });
 
-app.post('/article/:id/like', (req, res) => {
+app.post('/article/:id/like', async (req, res) => {
     const articleId = req.params.id;
-    const userId = req.body.user_id;  // This would come from the logged-in user
+    const { user_id } = req.body;
 
-    const checkIfLikedQuery = 'SELECT * FROM likes WHERE article_id = ? AND user_id = ?';
-    db.execute(checkIfLikedQuery, [articleId, userId])
-        .then(([rows]) => {
-            if (rows.length > 0) {
-                return res.status(400).json({ success: false, message: 'You already liked this article' });
-            }
+    try {
+        // Check if the user has already liked this article
+        const [existingLike] = await db.query(
+            'SELECT * FROM likes WHERE article_id = ? AND user_id = ?',
+            [articleId, user_id]
+        );
 
-            const insertLikeQuery = 'INSERT INTO likes (article_id, user_id) VALUES (?, ?)';
-            db.execute(insertLikeQuery, [articleId, userId])
-                .then(() => {
-                    res.status(201).json({ success: true, message: 'Like added' });
-                })
-                .catch((err) => {
-                    console.error('Error adding like:', err);
-                    res.status(500).json({ success: false, message: 'Error adding like' });
-                });
-        })
-        .catch((err) => {
-            console.error('Error checking like:', err);
-            res.status(500).json({ success: false, message: 'Error checking like' });
-        });
+        if (existingLike.length > 0) {
+            return res.status(400).json({ success: false, message: 'You have already liked this article' });
+        }
+
+        // Add the like to the database
+        await db.query('INSERT INTO likes (article_id, user_id) VALUES (?, ?)', [articleId, user_id]);
+
+        // Send success response
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error adding like:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 });
 
 app.get('/article/:id/likes', (req, res) => {
