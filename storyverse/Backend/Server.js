@@ -23,7 +23,7 @@ let db;
             host: 'localhost',
             user: 'root',
             password: 'Apeksha@9483', // Add your MySQL password
-            database: 'blogging',
+            database: 'storyverse',
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0,
@@ -110,45 +110,7 @@ app.get('/user-info', (req, res) => {
     res.json({ role: decoded.role });
 });
 
-// Fetch Author Stats
-// app.get('/author-stats', (req, res) => {
-//     const token = req.headers.authorization.split(' ')[1];
-//     const decoded = jwt.verify(token, SECRET_KEY); // Replace with your actual secret key
 
-//     if (decoded.role !== 'author') {
-//         return res.status(403).send('Access denied');
-//     }
-
-//  // SELECT 
-//         //     a.author_name AS authorName,
-//         //     a.profile_picture AS profilePicture,
-//         //     a.bio AS authorBio,
-//         //     COUNT(ar.id) AS totalArticles,
-//         //     SUM(ar.views) AS totalViews,
-//         //     SUM(ar.comments) AS totalComments
-//         // FROM authors AS a
-//         // LEFT JOIN articles AS ar ON a.id = ar.author_id
-//         // WHERE a.id = ?   
-//     const query = `
-//         SELECT  author_name,profile_picture,bio from author where user_id=?
-//     `;
-
-//     db.execute(query, [decoded.id])
-//         .then(([results]) => {
-//             if (results.length === 0) {
-//                 return res.status(404).send('Author not found');
-//             }
-//             res.json(results[0]);
-//         })
-//         .catch((error) => {
-//             console.error('Error fetching stats:', error);
-//             res.status(500).send('Error fetching stats');
-//         });
-// });
-
-
-
-// Fetch author name
 // Fetch author name
 app.get('/author-name', async (req, res) => {
     try {
@@ -222,53 +184,6 @@ app.post('/update-profile', upload.single('profilePicture'), async (req, res) =>
         res.status(500).json({ error: 'Server error' });
     }
 });
-
-
-// app.get('/author-stats', (req, res) => {
-//     const authHeader = req.headers.authorization;
-
-//     if (!authHeader) {
-//         return res.status(401).send('Authorization header is missing');
-//     }
-
-//     const tokenParts = authHeader.split(' ');
-
-//     if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-//         return res.status(400).send('Invalid authorization format');
-//     }
-
-//     const token = tokenParts[1];
-
-//     try {
-//         const decoded = jwt.verify(token, SECRET_KEY);
-
-//         console.log("Decoded Token:", decoded);
-
-//         const query = `
-//             SELECT author_name 
-//             FROM author 
-//             WHERE user_id = ?
-//         `;
-
-//         db.execute(query, [decoded.id])
-//             .then(([results]) => {
-//                 console.log("Query Results:", results);
-//                 if (results.length === 0) {
-//                     return res.status(404).send('Author not found');
-//                 }
-//                 res.json(results[0]);
-//             })
-//             .catch((error) => {
-//                 console.error('Error fetching stats:', error);
-//                 res.status(500).send('Error fetching stats');
-//             });
-//     } catch (error) {
-//         console.error('Token verification failed:', error);
-//         return res.status(403).send('Invalid or expired token');
-//     }
-// });
-
-
 
 app.post('/upload-article', upload.single('coverImage'), (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
@@ -355,31 +270,6 @@ app.get('/article/:id', (req, res) => {
         });
 });
 
-app.post('/article/:id/like', async (req, res) => {
-    const articleId = req.params.id;
-    const { user_id } = req.body;
-
-    try {
-        // Check if the user has already liked this article
-        const [existingLike] = await db.query(
-            'SELECT * FROM likes WHERE article_id = ? AND user_id = ?',
-            [articleId, user_id]
-        );
-
-        if (existingLike.length > 0) {
-            return res.status(400).json({ success: false, message: 'You have already liked this article' });
-        }
-
-        // Add the like to the database
-        await db.query('INSERT INTO likes (article_id, user_id) VALUES (?, ?)', [articleId, user_id]);
-
-        // Send success response
-        res.json({ success: true });
-    } catch (err) {
-        console.error('Error adding like:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
 
 app.get('/article/:id/likes', (req, res) => {
     const articleId = req.params.id;

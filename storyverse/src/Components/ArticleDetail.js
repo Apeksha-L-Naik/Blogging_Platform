@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import '../Styles/ArticleDetails.css'
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -11,6 +12,7 @@ const ArticleDetails = () => {
     const [commentText, setCommentText] = useState('');
 
     const userId = localStorage.getItem('userId'); // Replace with your authentication system
+    
 
     useEffect(() => {
         const fetchArticle = async () => {
@@ -52,7 +54,7 @@ const ArticleDetails = () => {
         }
 
         try {
-            const response = await axios.post(`http://localhost:5000/article/${id}/like`, { user_id: userId });
+            const response = await axios.post(`http://localhost:5000/article/${id}/likes`, { user_id: userId });
             if (response.data.success) {
                 setLikeCount(prevCount => prevCount + 1);
                 setHasLiked(true);
@@ -83,45 +85,54 @@ const ArticleDetails = () => {
     if (!article) return <div>Loading...</div>;
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>{article.title}</h2>
-            <p style={{ fontStyle: 'italic', color: 'gray' }}>By: {article.author_name}</p>
+        <div className="article-details-container">
+
+        <div className="article-header">
+            <h2 className="article-title">{article.title}</h2>
+            <p className="article-author">By: <span>{article.author_name}</span></p>
+            </div>
+            <div className="article-cover">
+
             <img
                 src={`http://localhost:5000/${article.cover_image_url}`}
                 alt="Cover"
-                style={{
-                    width: '100%',
-                    height: '350px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    marginBottom: '10px',
-                }}
-            />
-            <p>{article.content}</p>
+                className="article-image"
 
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
-                <button style={{ marginRight: '10px' }} onClick={handleLike} disabled={hasLiked}>
-                    Like
-                </button>
-                <span>{likeCount} Likes</span>
+            />
+               </div>
+
+<div className="article-content">
+<p>{article.content}</p>
+</div>
+
+
+            <div className="article-actions">
+                 <button className="like-button">❤</button>
+
+                 <span className="like-count">{likeCount} Likes</span>
             </div>
 
-            <div style={{ marginTop: '20px' }}>
-                <h3>Comments</h3>
+            <div className="article-comments-section">
+                 <h3 className="comments-header">Comments</h3>
                 {comments.map(comment => (
-                    <div key={comment.comment_id} style={{ marginBottom: '10px' }}>
-                        <p><strong>User {comment.user_id}</strong>: {comment.text}</p>
+                    <div key={comment.comment_id} className="comment">
+                         <p>
+                <strong>User {comment.user_id}</strong>: {comment.text}
+              </p>
+
                     </div>
                 ))}
+
                 <textarea
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
                     placeholder="Add a comment..."
                     rows="4"
-                    style={{ width: '100%' }}
+                     className="comment-input"
                 />
-                <button style={{ marginTop: '10px' }} onClick={handleCommentSubmit}>Post Comment</button>
+                <button className="comment-submit-button" onClick={handleCommentSubmit}>Post Comment</button>
             </div>
+
         </div>
     );
 };

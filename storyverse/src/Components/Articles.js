@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import '../Styles/article.css'
 
 const Articles = ({ searchQuery }) => {
     const [articles, setArticles] = useState([]);
@@ -44,39 +45,27 @@ const Articles = ({ searchQuery }) => {
         });
 
     return (
-        <div>
-            <h2>Articles</h2>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        <div className="unique-articles-container">
+            <h2 className="unique-articles-title">Articles</h2>
+            <div className="unique-articles-list">
                 {filteredArticles.map((article) => (
                     <div
                         key={article.article_id}
-                        style={{
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            padding: '16px',
-                            width: '300px',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                        }}
+                        className="unique-article-card"
                     >
                         {article.cover_image_url && (
                             <img
                                 src={`http://localhost:5000/${article.cover_image_url}`}
                                 alt="Cover"
-                                style={{
-                                    width: '100%',
-                                    height: '150px',
-                                    objectFit: 'cover',
-                                    borderRadius: '8px',
-                                    marginBottom: '10px',
-                                }}
+                                className="unique-article-image"
                             />
                         )}
-                        <h3>{article.title}</h3>
-                        <p style={{ fontStyle: 'italic', color: 'gray' }}>
+                        <h3 className="unique-article-title">{article.title}</h3>
+                        <p className="unique-article-author">
                             By: {article.author_name || 'Unknown Author'}
                         </p>
                         <Link to={`/articles/${article.article_id}`}>
-                            <button style={{ marginTop: '10px' }}>Read More</button>
+                            <button  className="unique-article-button">Read More</button>
                         </Link>
                     </div>
                 ))}

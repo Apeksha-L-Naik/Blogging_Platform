@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Articles from './Articles';
+import '../Styles/home.css'
 
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
@@ -136,6 +137,19 @@ const Home = () => {
                 setNewArticle={setNewArticle}
                 setCoverImage={setCoverImage}
             />
+            <div className="image-container" style={{width:'1550px'}}>
+    <img
+        src="https://i.pinimg.com/736x/20/c8/f1/20c8f1e4e08799bef736da87324e9b37.jpg" 
+        alt="Home Page"
+        className="home-image"
+    />
+    <div className="image-overlay-text">
+        <h1 className="fade-in">Welcome to StoryVerse</h1>
+        <p className="fade-in">Embark on a journey through endless articles, inspiring stories, and unforgettable reads, all crafted for you.</p>
+        <button className="cta-button fade-in">Explore Stories</button>
+    </div>
+</div>
+
 
             {/* Articles Display */}
             <div style={{ padding: '20px' }}>

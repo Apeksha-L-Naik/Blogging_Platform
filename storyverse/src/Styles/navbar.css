@@ -1,0 +1,450 @@
+/* General styling for the navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'Playfair Display', serif;
+    overflow: hidden; 
+    left: 0; /* Ensure the navbar starts from the left edge */
+    width: 100%;
+}
+
+
+  
+  .hidden {
+    display: none;
+  }
+/* Logo styling */
+.navbar-logo h1 {
+    font-size: 1.8em;
+    color: #ff7e5f;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    margin: 0;
+}
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Add spacing between the search bar and the icon */
+}
+/* Search bar container */
+.navbar-search {
+    display: flex;
+    align-items: center;
+  
+    
+}
+
+/* Search input styling */
+.search-input {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+    font-size: 1em;
+    width: 300px;
+    max-width: 80%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Search button styling */
+.search-button {
+    padding: 12px 20px;
+    height: auto;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.search-input,
+.search-button {
+    display: flex;
+    align-items: center;
+    line-height: 1; /* Reset line height for consistency */
+    box-sizing: border-box; /* Include padding in size calculations */
+}
+
+.search-button:hover {
+    transform: scale(1.05); /* Slight scaling animation */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+}
+
+/* Author Dashboard Button */
+.dashboard-toggle {
+    padding: 10px 15px;
+    border: none;
+    background: #ff7e5f;
+    color: white;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 180px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-toggle:hover {
+    background: #feb47b;
+    transform: scale(1.1);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .navbar-logo h1 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .navbar-search {
+        width: 100%;
+        align-items: center;
+        display: flex;
+    }
+
+    .search-input {
+        width: calc(100% - 100px);
+    }
+    .navbar-right {
+        display: flex;
+        align-items: center;
+    }
+    .dashboard-toggle {
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+}
+/* Author Dashboard Styles */
+
+/* General Author Dashboard Styling */
+.author-dashboard {
+    background: linear-gradient(to bottom right, #ffe8d6, #ffccbc);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    max-width: 800px;
+   
+  
+}
+
+/* Close Button */
+.author-dashboard-close-btn {
+    background:linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out;
+}
+
+.author-dashboard-close-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Title */
+.author-dashboard-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #6d4c41;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+    
+}
+
+/* Profile Picture */
+.author-profile-picture {
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid #ffb74d;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Profile Info */
+.author-profile-name, 
+.author-profile-bio, 
+.author-article-count {
+    margin-bottom: 15px;
+    color: #795548;
+    font-size: 1.1rem;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+   
+}
+.edit-profile-form {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9; 
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.5s ease;
+    align-items: center;
+    flex-direction: column;
+}
+
+.edit-profile-bio {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 100px; /* Adjust height as needed */
+    background-color: #f9f9f9; 
+    color: #6d4c41;
+    resize: vertical; 
+}
+
+/* Custom File Upload Styles */
+.custom-file-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff5f0;
+    border: 2px dashed #ff7e5f;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.custom-file-upload-container:hover {
+    background-color: #ffe8d6;
+    border-color: #feb47b;
+    transform: scale(1.02);
+}
+
+.custom-file-upload {
+    display: none; /* Hide the default file input */
+}
+
+.file-upload{
+    color: #feb47b;
+    border: 1px solid file-upload;
+}
+
+.custom-file-label {
+    font-size: 1rem;
+    color: #6d4c41;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.custom-file-label:hover {
+    background-color: #fb8c00;
+}
+
+.custom-file-name {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #6d4c41;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Save Button */
+.save-profile-btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    align-self: center;
+    
+   
+}
+
+.save-profile-btn:hover {
+    background-color: #fb8c00;
+}
+
+
+
+/* Upload Article Section */
+.upload-article-title {
+    font-size: 1.6rem;
+    color: #6d4c41;
+    text-align: center;
+    margin-top: 30px;
+    font-family: 'Playfair Display', serif;
+}
+
+.upload-article-form {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9; 
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.article-content-input{
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 100px; /* Adjust height as needed */
+    background-color: #f9f9f9; 
+    color: #6d4c41;
+    resize: vertical; 
+}
+.article-title-input, 
+.article-content-input, 
+.article-categories-input
+ {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9; 
+    color: #6d4c41;
+}
+.custom-article-upload{
+    display: none;
+}
+.upload-article-cover-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border: 2px dashed #ff7e5f;
+    border-radius: 10px;
+    background-color: #f9f9f9; 
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 15px;
+    color: #ff7e5f;
+}
+
+.upload-article-cover-container:hover {
+    border-color: #feb47b;
+     background-color: #f9f9f9; 
+    transform: scale(1.02);
+}
+
+.upload-article-cover-label {
+   
+        font-size: 1rem;
+        color: #6d4c41;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: linear-gradient(45deg, #ff7e5f, #feb47b);
+        color: white;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+
+.upload-article-cover {
+    display: block; /* Ensure the file input is visible */
+    width: 100%; /* Make it span the full width of the container */
+    max-width: 300px; /* Limit the maximum width for better design */
+    padding: 10px; /* Add padding for better usability */
+    margin: 10px auto; /* Center-align and add spacing */
+    border: 2px solid #ff7e5f; /* Add a border for visibility */
+    border-radius: 8px; /* Round the corners */
+    background-color: #ffccbc; /* Match the section background color */
+    color: #6d4c41; /* Match the text color */
+    font-size: 0.9rem; /* Set a readable font size */
+    text-align: center; /* Center-align the file name text */
+    cursor: pointer; /* Show a pointer cursor */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.upload-article-cover-btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.upload-file-name {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #6d4c41;
+    font-style: italic;
+    text-align: center;
+}
+
+.upload-article-cover-btn:hover {
+    background-color: #fb8c00;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .author-dashboard {
+        padding: 15px;
+    }
+
+    .author-profile-picture {
+        width: 100px;
+        height: 100px;
+    }
+}
