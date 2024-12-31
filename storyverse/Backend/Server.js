@@ -12,6 +12,7 @@ const PORT = 5000;
 
 // Middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(cors());
 
 // MySQL Connection
@@ -141,12 +142,12 @@ app.get('/author-name', async (req, res) => {
 
         const articleCount = articleCountResult[0].article_count;
 
-        // Send the author details along with article count in the response
+
         res.json({
             name: author[0].author_name,
-            bio: author[0].bio || '', // Default to an empty string if bio is null
-            profilePicture: author[0].profile_picture || '', // Default to an empty string if no picture
-            articleCount, // Add article count to the response
+            bio: author[0].bio || '',
+            profilePicture: author[0].profile_picture || '', 
+            articleCount, 
         });
     } catch (err) {
         console.error('Error fetching author details:', err);
@@ -162,15 +163,15 @@ app.post('/update-profile', upload.single('profilePicture'), async (req, res) =>
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        // Decode the token to extract user info
-        const decoded = jwt.verify(token, SECRET_KEY); // Use your secret key
-        const authorId = decoded.id; // Use decoded.id as user_id
 
-        // Extract bio and profile picture from the request
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const authorId = decoded.id; 
+
+
         const { bio } = req.body;
         const profilePicture = req.file?.path;
 
-        // Update the author's profile in the database
+
         const updateQuery = `
             UPDATE author
             SET bio = ?, profile_picture = ?
@@ -196,7 +197,7 @@ app.post('/upload-article', upload.single('coverImage'), (req, res) => {
         }
 
         const { title, content, categories } = req.body;
-        const coverImagePath = req.file?.path; // Get the path of the uploaded image
+        const coverImagePath = req.file?.path; 
 
         if (!title || !content || !categories) {
             return res.status(400).send('Title, content, and categories are required');
@@ -234,7 +235,7 @@ app.get('/articles', (req, res) => {
     const query = `
         SELECT articles.article_id, articles.title,articles.cover_image_url,author.author_name AS author_name
         FROM articles
-        JOIN author ON articles.author_id = author.author_id
+        JOIN author ON articles.author_id = author.user_id
     `;
 
     db.execute(query)
@@ -251,10 +252,12 @@ app.get('/articles', (req, res) => {
 app.get('/article/:id', (req, res) => {
     const articleId = req.params.id;
     const query = `
-        SELECT articles.article_id, articles.title, articles.content,articles.cover_image_url ,author.author_name AS author_name
+        SELECT articles.article_id, articles.title, articles.content, articles.cover_image_url, author.author_name AS author_name
         FROM articles
-        JOIN author ON articles.author_id = author.author_id
+        JOIN author 
+        ON articles.author_id = author.user_id 
         WHERE articles.article_id = ?
+
     `;
 
     db.execute(query, [articleId])
@@ -271,37 +274,172 @@ app.get('/article/:id', (req, res) => {
 });
 
 
-app.get('/article/:id/likes', (req, res) => {
+app.post('/article/:id/likes',async (req, res)  => {
+    const token = req.headers.authorization?.split(' ')[1]; // Extract token from the Authorization header
+
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized. No token provided.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
+        const userId = decoded.id; // Extract user ID from token
+        const articleId = req.params.id; // Extract article ID from route parameter
+
+        if (!userId || !articleId) {
+            return res.status(400).json({ error: 'Invalid user or article ID.' });
+        }
+
+        // Insert view record only if it does not already exist
+        const [result] = await db.query(
+            'INSERT IGNORE INTO likes (user_id, article_id) VALUES (?, ?)',
+            [userId, articleId]
+        );
+
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Like added successfully' });
+        } else {
+            res.status(400).json({ message: 'User has already Liked this article' });
+        }
+    } catch (error) {
+        console.error('Error incrementing like count:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/article/:id/likes',async (req, res) => {
     const articleId = req.params.id;
-    const query = 'SELECT COUNT(*) AS like_count FROM likes WHERE article_id = ?';
-    
-    db.execute(query, [articleId])
-        .then(([rows]) => {
-            res.status(200).send({ like_count: rows[0].like_count });
-        })
-        .catch((err) => {
-            console.error('Error fetching like count:', err);
-            res.status(500).send('Error fetching like count');
-        });
+
+    try {
+        const [result] = await db.query(
+            'SELECT COUNT(*) AS like_count FROM likes WHERE article_id = ?',
+            [articleId]
+        );
+
+        res.status(200).json({ view_count: result[0].view_count });
+    } catch (error) {
+        console.error('Error fetching like count:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+// app.get('/article/:id/likes/user/:userId', (req, res) => {
+//     const { id, userId } = req.params;
+
+//     // Check if the user has already liked the article
+//     const checkLikeQuery = `SELECT * FROM likes WHERE article_id = ? AND user_id = ?`;
+//     db.query(checkLikeQuery, [id, userId], (err, existingLike) => {
+//         if (err) {
+//             return res.status(500).json({ error: 'Database error' });
+//         }
+//         return res.json({ hasLiked: existingLike.length > 0 });
+//     });
+// });
+
+app.get('/article/:id/likes/status',  (req, res) => {
+    const { id, userId } = req.params;
+
+    // Check if the user has already liked the article
+    const checkLikeQuery = `SELECT * FROM likes WHERE article_id = ? AND user_id = ?`;
+    db.query(checkLikeQuery, [id, userId], (err, existingLike) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        return res.json({ hasLiked: existingLike.length > 0 });
+    });
 });
 
-app.post('/article/:id/comment', (req, res) => {
+app.post('/article/:id/views', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1]; // Extract token from the Authorization header
+
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized. No token provided.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
+        const userId = decoded.id; // Extract user ID from token
+        const articleId = req.params.id; // Extract article ID from route parameter
+
+        if (!userId || !articleId) {
+            return res.status(400).json({ error: 'Invalid user or article ID.' });
+        }
+
+        // Insert view record only if it does not already exist
+        const [result] = await db.query(
+            'INSERT IGNORE INTO views (user_id, article_id) VALUES (?, ?)',
+            [userId, articleId]
+        );
+
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'View added successfully' });
+        } else {
+            res.status(400).json({ message: 'User has already viewed this article' });
+        }
+    } catch (error) {
+        console.error('Error incrementing view count:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Route to fetch view count for an article
+app.get('/article/:id/views', async (req, res) => {
+    const articleId = req.params.id;
+
+    try {
+        const [result] = await db.query(
+            'SELECT COUNT(*) AS view_count FROM views WHERE article_id = ?',
+            [articleId]
+        );
+
+        res.status(200).json({ view_count: result[0].view_count });
+    } catch (error) {
+        console.error('Error fetching view count:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+// Route to get comments of an article
+app.get('/article/:id/comments', async (req, res) => {
     const { id } = req.params;
-    const { user_id, text } = req.body;
 
-    const query = 'INSERT INTO comments (article_id, user_id, text) VALUES (?, ?, ?)';
-    db.execute(query, [id, user_id, text])
-        .then(() => {
-            res.status(201).send('Comment added successfully');
-        })
-        .catch((err) => {
-            console.error('Error posting comment:', err);
-            res.status(500).send('Error posting comment');
-        });
+    try {
+        const query = 'SELECT comments.comment_id, comments.user_id, users.username, comments.text FROM comments JOIN users ON comments.user_id = users.id WHERE comments.article_id = ?';
+        const [comments] = await db.execute(query, [id]);
+        res.status(200).json(comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ message: 'Error fetching comments' });
+    }
 });
 
+// Route to post a comment on an article
+app.post('/article/:id/comment', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];  // Bearer <token>
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized. No token provided.' });
+    }
 
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);  // Verify the token
 
+        const userId = decoded.id;  // Extract user ID from the token
+        const { text } = req.body;  // Comment text from the request body
+        const articleId = req.params.id;  // Article ID from route parameter
+
+        if (!text) {
+            return res.status(400).json({ error: 'Comment text is required' });
+        }
+
+        // Insert the new comment into the database
+        const insertQuery = 'INSERT INTO comments (article_id, user_id, text) VALUES (?, ?, ?)';
+        await db.execute(insertQuery, [articleId, userId, text]);
+
+        res.status(200).json({ message: 'Comment posted successfully' });
+    } catch (error) {
+        console.error('Error posting comment:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 // Start Server
 app.listen(PORT, () => {

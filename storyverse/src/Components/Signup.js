@@ -9,7 +9,7 @@ const Signup = () => {
         username: '',
         email: '',
         password: '',
-        role: 'reader',
+        role: 'other',
     });
 
     const navigate = useNavigate(); // Initialize useNavigate
@@ -43,6 +43,7 @@ const Signup = () => {
             <input name="password" type="password" placeholder="Enter your password" onChange={handleChange} required />
             <label>Role</label>
             <select name="role" onChange={handleChange}>
+                <option value="other">Other</option>
                 <option value="reader">Reader</option>
                 <option value="author">Author</option>
             </select>

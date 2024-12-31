@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import '../Styles/ArticleDetails.css'
+import '../Styles/ArticleDetails.css';
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -10,14 +10,25 @@ const ArticleDetails = () => {
     const [hasLiked, setHasLiked] = useState(false);
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState('');
+    const [viewCount, setViewCount] = useState(0); // View count
 
-    const userId = localStorage.getItem('userId'); // Replace with your authentication system
-    
+    // Retrieve the token from localStorage
+    const token = localStorage.getItem('token'); // Replace with your authentication system
+
+    // Make sure the token exists before proceeding with requests
+    if (!token) {
+        // Redirect the user to login page if no token exists
+        window.location.href = '/login';
+    }
 
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/article/${id}`);
+                const response = await axios.get(`http://localhost:5000/article/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
                 setArticle(response.data);
             } catch (error) {
                 console.error('Error fetching article:', error.response || error);
@@ -26,37 +37,92 @@ const ArticleDetails = () => {
 
         const fetchLikeCount = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/article/${id}/likes`);
+                const response = await axios.get(`http://localhost:5000/article/${id}/likes`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
                 setLikeCount(response.data.like_count);
             } catch (error) {
                 console.error('Error fetching like count:', error.response || error);
             }
         };
 
+        const fetchLikeStatus = async () => {
+    try {
+        const response = await axios.get(`http://localhost:5000/article/${id}/likes/status`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        setHasLiked(response.data.hasLiked); // Set hasLiked based on server response
+    } catch (error) {
+        console.error('Error fetching like status:', error.response || error);
+    }
+};
+
+
         const fetchComments = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/article/${id}/comments`);
+                const response = await axios.get(`http://localhost:5000/article/${id}/comments`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
                 setComments(response.data);
             } catch (error) {
                 console.error('Error fetching comments:', error.response || error);
             }
         };
 
+        const fetchViewCount = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/article/${id}/views`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+                setViewCount(response.data.view_count);
+            } catch (error) {
+                console.error('Error fetching view count:', error.response || error);
+            }
+        };
+
+        const incrementViewCount = async () => {
+            try {
+                await axios.post(`http://localhost:5000/article/${id}/views`, {}, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+                fetchViewCount(); // Fetch updated view count
+            } catch (error) {
+                console.error('Error incrementing view count:', error.response || error);
+            }
+        };
+
+        // Trigger all the fetches when the component mounts
         fetchArticle();
         fetchLikeCount();
+        fetchLikeStatus();
         fetchComments();
-    }, [id]);
+        incrementViewCount(); // Increment view count upon loading article details
+    }, [id, token]);
 
     const handleLike = async () => {
         if (hasLiked) {
             alert('You have already liked this article!');
             return;
         }
-
+    
         try {
-            const response = await axios.post(`http://localhost:5000/article/${id}/likes`, { user_id: userId });
+            const response = await axios.post(`http://localhost:5000/article/${id}/likes`, {}, { // Empty body
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
             if (response.data.success) {
-                setLikeCount(prevCount => prevCount + 1);
+                setLikeCount(response.data.like_count);
                 setHasLiked(true);
             } else {
                 alert(response.data.message);
@@ -65,6 +131,7 @@ const ArticleDetails = () => {
             console.error('Error adding like:', error.response || error);
         }
     };
+    
 
     const handleCommentSubmit = async () => {
         if (!commentText) {
@@ -73,9 +140,17 @@ const ArticleDetails = () => {
         }
 
         try {
-            await axios.post(`http://localhost:5000/article/${id}/comment`, { user_id: userId, text: commentText });
+            await axios.post(`http://localhost:5000/article/${id}/comment`, { userId: token, text: commentText }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
             setCommentText('');
-            const commentsResponse = await axios.get(`http://localhost:5000/article/${id}/comments`);
+            const commentsResponse = await axios.get(`http://localhost:5000/article/${id}/comments`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
             setComments(commentsResponse.data);
         } catch (error) {
             console.error('Error posting comment:', error.response || error);
@@ -86,53 +161,51 @@ const ArticleDetails = () => {
 
     return (
         <div className="article-details-container">
-
-        <div className="article-header">
-            <h2 className="article-title">{article.title}</h2>
-            <p className="article-author">By: <span>{article.author_name}</span></p>
+            <div className="article-header">
+                <h2 className="article-title">{article.title}</h2>
+                <p className="article-author">By: <span>{article.author_name}</span></p>
             </div>
             <div className="article-cover">
-
-            <img
-                src={`http://localhost:5000/${article.cover_image_url}`}
-                alt="Cover"
-                className="article-image"
-
-            />
-               </div>
-
-<div className="article-content">
-<p>{article.content}</p>
-</div>
-
-
+                <img
+                    src={`http://localhost:5000/${article.cover_image_url}`}
+                    alt="Cover"
+                    className="article-image"
+                />
+            </div>
+            <div className="article-content">
+                <p>{article.content}</p>
+            </div>
             <div className="article-actions">
-                 <button className="like-button">❤</button>
-
-                 <span className="like-count">{likeCount} Likes</span>
+                <button
+                    className={`like-button ${hasLiked ? 'liked' : ''}`}
+                    onClick={handleLike}
+                >
+                    ❤
+                </button>
+                <span className="like-count">1{likeCount} - Likes</span>
+                <div className="view-count">
+                    <span>Views: {viewCount}</span>
+                </div>
             </div>
 
             <div className="article-comments-section">
-                 <h3 className="comments-header">Comments</h3>
-                {comments.map(comment => (
+                <h3 className="comments-header">Comments</h3>
+                {comments.map((comment) => (
                     <div key={comment.comment_id} className="comment">
-                         <p>
-                <strong>User {comment.user_id}</strong>: {comment.text}
-              </p>
-
+                        <p>
+                            <strong>User {comment.username}</strong>: {comment.text}
+                        </p>
                     </div>
                 ))}
-
                 <textarea
                     value={commentText}
-                    onChange={e => setCommentText(e.target.value)}
+                    onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a comment..."
                     rows="4"
-                     className="comment-input"
+                    className="comment-input"
                 />
                 <button className="comment-submit-button" onClick={handleCommentSubmit}>Post Comment</button>
             </div>
-
         </div>
     );
 };
