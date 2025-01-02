@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import '../Styles/article.css'
+import '../Styles/article.css';
+
 
 const Articles = ({ searchQuery }) => {
     const [articles, setArticles] = useState([]);
@@ -18,33 +19,41 @@ const Articles = ({ searchQuery }) => {
         fetchArticles();
     }, []);
 
+    // Ensure searchQuery is always a string
+    const safeSearchQuery = (searchQuery || '').toLowerCase();
+
     // Filter and sort articles safely
     const filteredArticles = articles
         .filter((article) => {
-            const title = article.title || ''; // Default to an empty string if undefined
-            const content = article.content || ''; // Default to an empty string if undefined
-            const categories = article.categories || []; // Default to an empty array if undefined
-            const authorName = article.author_name || ''; // Default to an empty string if undefined
+            const title = (article.title || '').toString(); // Default to empty string if undefined
+            const content = (article.content || '').toString(); // Default to empty string if undefined
+            const categories = Array.isArray(article.categories) ? article.categories : []; // Ensure categories is an array
+            const authorName = (article.author_name || '').toString(); // Default to empty string if undefined
 
             return (
-                title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                authorName.toLowerCase().includes(searchQuery.toLowerCase()) || // Check author name
+                title.toLowerCase().includes(safeSearchQuery) ||
+                content.toLowerCase().includes(safeSearchQuery) ||
+                authorName.toLowerCase().includes(safeSearchQuery) ||
                 categories.some((category) =>
-                    (category || '').toLowerCase().includes(searchQuery.toLowerCase())
+                    (category || '').toString().toLowerCase().includes(safeSearchQuery)
                 )
             );
         })
         .sort((a, b) => {
-            const aTitleMatch = (a.title || '').toLowerCase().includes(searchQuery.toLowerCase());
-            const bTitleMatch = (b.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+            const aTitle = (a.title || '').toString().toLowerCase();
+            const bTitle = (b.title || '').toString().toLowerCase();
 
-            if (aTitleMatch && !bTitleMatch) return -1; // Prioritize articles with title match
+            const aTitleMatch = aTitle.includes(safeSearchQuery);
+            const bTitleMatch = bTitle.includes(safeSearchQuery);
+
+            if (aTitleMatch && !bTitleMatch) return -1;
             if (!aTitleMatch && bTitleMatch) return 1;
             return 0; // Maintain original order otherwise
         });
 
     return (
+        <>
+
         <div className="unique-articles-container">
             <h2 className="unique-articles-title">Articles</h2>
             <div className="unique-articles-list">
@@ -71,6 +80,7 @@ const Articles = ({ searchQuery }) => {
                 ))}
             </div>
         </div>
+        </>
     );
 };
 

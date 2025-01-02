@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import Articles from './Articles';
+// import Articles from './Articles';
 import '../Styles/home.css'
+import Categories from './Categories';
 
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
@@ -146,14 +147,14 @@ const Home = () => {
     <div className="image-overlay-text">
         <h1 className="fade-in">Welcome to StoryVerse</h1>
         <p className="fade-in">Embark on a journey through endless articles, inspiring stories, and unforgettable reads, all crafted for you.</p>
-        <button className="cta-button fade-in">Explore Stories</button>
+        <button className="cta-button fade-in" onClick={()=>navigate('/articles')}>Explore Stories</button>
     </div>
 </div>
 
 
             {/* Articles Display */}
             <div style={{ padding: '20px' }}>
-                <Articles searchQuery={searchQuery} />
+                <Categories/>
             </div>
         </div>
     );

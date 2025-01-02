@@ -228,8 +228,53 @@ app.post('/upload-article', upload.single('coverImage'), (req, res) => {
         res.status(401).send('Invalid or expired token');
     }
 });
+app.get('/categories', (req, res) => {
+    db.execute('SELECT DISTINCT name FROM categories')
+        .then(([categories]) => {
+            // console.log('Raw categories data:', categories); // Log the raw data
+            res.status(200).send(categories.map((category) => category.name));
+        })
+        .catch((err) => {
+            console.error('Database error:', err);
+            res.status(500).send('Error fetching categories');
+        });
+});
 
+app.get('/categories/:categoryName/articles', (req, res) => {
+    const { categoryName } = req.params;
 
+    db.execute(
+        `SELECT 
+    a.article_id AS article_id, 
+    a.title, 
+    a.content, 
+    a.cover_image_url, 
+    u.username AS author_name
+FROM 
+    articles a
+JOIN 
+    categories c ON a.article_id = c.article_id
+JOIN 
+    author au ON a.author_id = au.author_id
+JOIN 
+    users u ON au.user_id = u.id
+WHERE 
+    c.name = ?`
+,
+
+        [categoryName]
+    )
+        .then(([articles]) => {
+            if (articles.length === 0) {
+                return res.status(404).send({ message: 'No articles found for this category.' });
+            }
+            res.status(200).send(articles);
+        })
+        .catch((err) => {
+            console.error('Database error:', err);
+            res.status(500).send('Error fetching articles for the category');
+        });
+});
 
 app.get('/articles', (req, res) => {
     const query = `
@@ -307,7 +352,7 @@ app.post('/article/:id/likes',async (req, res)  => {
     }
 });
 
-app.get('/article/:id/likes',async (req, res) => {
+app.get('/article/:id/likes', async (req, res) => {
     const articleId = req.params.id;
 
     try {
@@ -316,12 +361,14 @@ app.get('/article/:id/likes',async (req, res) => {
             [articleId]
         );
 
-        res.status(200).json({ view_count: result[0].view_count });
+        // Return the correct field 'like_count'
+        res.status(200).json({ like_count: result[0].like_count });
     } catch (error) {
         console.error('Error fetching like count:', error.message);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 // app.get('/article/:id/likes/user/:userId', (req, res) => {
 //     const { id, userId } = req.params;
 
@@ -438,6 +485,54 @@ app.post('/article/:id/comment', async (req, res) => {
     } catch (error) {
         console.error('Error posting comment:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+app.get('/analytics', async (req, res) => {
+    try {
+        // Fetch overall statistics
+        const [totalArticles] = await db.query(
+            'SELECT COUNT(*) AS total_articles FROM articles'
+        );
+
+        const [totalReaders] = await db.query(
+            `SELECT COUNT(DISTINCT id) AS total_readers 
+             FROM users 
+             WHERE role = 'reader'`
+        );
+
+        const [totalAuthors] = await db.query(
+            `SELECT COUNT(*) AS total_authors 
+             FROM author`
+        );
+
+        const [articlesDetails] = await db.query(
+            `SELECT a.article_id, a.title, 
+                    COUNT(DISTINCT v.view_id) AS views, 
+                    COUNT(DISTINCT l.like_id) AS likes
+             FROM articles a
+             LEFT JOIN views v ON a.article_id = v.article_id
+             LEFT JOIN likes l ON a.article_id = l.article_id
+             GROUP BY a.article_id`
+        );
+
+        const [categoryCounts] = await db.query(
+            `SELECT name , COUNT(*) AS count 
+             FROM categories
+             GROUP BY name`
+        );
+        
+
+        // Send data
+        res.status(200).json({
+            totalArticles: totalArticles[0].total_articles || 0,
+            totalReaders: totalReaders[0].total_readers || 0,
+            totalAuthors: totalAuthors[0].total_authors || 0, // Added totalAuthors
+            articles: articlesDetails || [],
+            categories: categoryCounts || []
+        });
+    } catch (error) {
+        console.error('Error fetching analytics data:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 

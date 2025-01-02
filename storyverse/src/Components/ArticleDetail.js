@@ -39,14 +39,17 @@ const ArticleDetails = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/article/${id}/likes`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                setLikeCount(response.data.like_count);
+                console.log('Fetched like count:', response.data.like_count);
+                setLikeCount(response.data.like_count || 0); // Set 0 if undefined
             } catch (error) {
                 console.error('Error fetching like count:', error.response || error);
             }
         };
+    
+        
 
         const fetchLikeStatus = async () => {
     try {
@@ -182,7 +185,7 @@ const ArticleDetails = () => {
                 >
                     ❤
                 </button>
-                <span className="like-count">1{likeCount} - Likes</span>
+                <span className="like-count">{likeCount} - Likes</span>
                 <div className="view-count">
                     <span>Views: {viewCount}</span>
                 </div>

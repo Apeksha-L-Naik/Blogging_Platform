@@ -1,0 +1,16 @@
+.articles-list {
+    display: flex;
+    gap: 40px;
+    padding-top: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: #222;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    position: relative;
+}

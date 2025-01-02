@@ -32,11 +32,18 @@
 
 /* Articles Grid */
 .unique-articles-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    justify-content: center;
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping to the next line if necessary */
+    gap: 30px; /* Adds spacing between the cards */
+    justify-content: center; /* Centers the cards horizontally */
 }
+
+.unique-articles-list .card {
+    flex: 1 1 calc(25% - 30px); /* Each card takes up 25% width minus gap */
+    max-width: calc(25% - 30px); /* Ensures a maximum width per card */
+    box-sizing: border-box; /* Includes padding and borders in size calculation */
+}
+
 
 /* Article Card */
 .unique-article-card {
