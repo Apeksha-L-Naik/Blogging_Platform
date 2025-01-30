@@ -115,16 +115,14 @@ app.get('/user-info', (req, res) => {
 // Fetch author name
 app.get('/author-name', async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]; // Get token from the header
+        const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        // Decode the token to extract user info
-        const decoded = jwt.verify(token, SECRET_KEY); // Use your secret key here
-        const authorId = decoded.id; // Use decoded.id as user_id
+        const decoded = jwt.verify(token, SECRET_KEY); 
+        const authorId = decoded.id; 
 
-        // Query the database for author's details (name, bio, profile_picture) and article count
         const [author] = await db.query(
             'SELECT author_name, bio, profile_picture FROM author WHERE user_id = ?',
             [authorId]
@@ -134,7 +132,6 @@ app.get('/author-name', async (req, res) => {
             return res.status(404).json({ error: 'Author not found' });
         }
 
-        // Query to get the article count
         const [articleCountResult] = await db.query(
             'SELECT COUNT(*) AS article_count FROM articles WHERE author_id = ?',
             [authorId]
@@ -335,7 +332,6 @@ app.post('/article/:id/likes',async (req, res)  => {
             return res.status(400).json({ error: 'Invalid user or article ID.' });
         }
 
-        // Insert view record only if it does not already exist
         const [result] = await db.query(
             'INSERT IGNORE INTO likes (user_id, article_id) VALUES (?, ?)',
             [userId, articleId]
@@ -361,7 +357,7 @@ app.get('/article/:id/likes', async (req, res) => {
             [articleId]
         );
 
-        // Return the correct field 'like_count'
+
         res.status(200).json({ like_count: result[0].like_count });
     } catch (error) {
         console.error('Error fetching like count:', error.message);
@@ -369,23 +365,11 @@ app.get('/article/:id/likes', async (req, res) => {
     }
 });
 
-// app.get('/article/:id/likes/user/:userId', (req, res) => {
-//     const { id, userId } = req.params;
-
-//     // Check if the user has already liked the article
-//     const checkLikeQuery = `SELECT * FROM likes WHERE article_id = ? AND user_id = ?`;
-//     db.query(checkLikeQuery, [id, userId], (err, existingLike) => {
-//         if (err) {
-//             return res.status(500).json({ error: 'Database error' });
-//         }
-//         return res.json({ hasLiked: existingLike.length > 0 });
-//     });
-// });
 
 app.get('/article/:id/likes/status',  (req, res) => {
     const { id, userId } = req.params;
 
-    // Check if the user has already liked the article
+
     const checkLikeQuery = `SELECT * FROM likes WHERE article_id = ? AND user_id = ?`;
     db.query(checkLikeQuery, [id, userId], (err, existingLike) => {
         if (err) {
@@ -396,22 +380,22 @@ app.get('/article/:id/likes/status',  (req, res) => {
 });
 
 app.post('/article/:id/views', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from the Authorization header
+    const token = req.headers.authorization?.split(' ')[1]; 
 
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized. No token provided.' });
     }
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
-        const userId = decoded.id; // Extract user ID from token
-        const articleId = req.params.id; // Extract article ID from route parameter
+        const decoded = jwt.verify(token, SECRET_KEY); 
+        const userId = decoded.id; 
+        const articleId = req.params.id;
 
         if (!userId || !articleId) {
             return res.status(400).json({ error: 'Invalid user or article ID.' });
         }
 
-        // Insert view record only if it does not already exist
+
         const [result] = await db.query(
             'INSERT IGNORE INTO views (user_id, article_id) VALUES (?, ?)',
             [userId, articleId]
@@ -428,7 +412,6 @@ app.post('/article/:id/views', async (req, res) => {
     }
 });
 
-// Route to fetch view count for an article
 app.get('/article/:id/views', async (req, res) => {
     const articleId = req.params.id;
 
@@ -444,7 +427,7 @@ app.get('/article/:id/views', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-// Route to get comments of an article
+
 app.get('/article/:id/comments', async (req, res) => {
     const { id } = req.params;
 
@@ -460,24 +443,24 @@ app.get('/article/:id/comments', async (req, res) => {
 
 // Route to post a comment on an article
 app.post('/article/:id/comment', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];  // Bearer <token>
+    const token = req.headers.authorization?.split(' ')[1]; 
     
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized. No token provided.' });
     }
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY);  // Verify the token
+        const decoded = jwt.verify(token, SECRET_KEY); 
 
-        const userId = decoded.id;  // Extract user ID from the token
-        const { text } = req.body;  // Comment text from the request body
-        const articleId = req.params.id;  // Article ID from route parameter
+        const userId = decoded.id;  
+        const { text } = req.body;  
+        const articleId = req.params.id;  
 
         if (!text) {
             return res.status(400).json({ error: 'Comment text is required' });
         }
 
-        // Insert the new comment into the database
+
         const insertQuery = 'INSERT INTO comments (article_id, user_id, text) VALUES (?, ?, ?)';
         await db.execute(insertQuery, [articleId, userId, text]);
 
@@ -489,7 +472,7 @@ app.post('/article/:id/comment', async (req, res) => {
 });
 app.get('/analytics', async (req, res) => {
     try {
-        // Fetch overall statistics
+
         const [totalArticles] = await db.query(
             'SELECT COUNT(*) AS total_articles FROM articles'
         );
@@ -526,7 +509,7 @@ app.get('/analytics', async (req, res) => {
         res.status(200).json({
             totalArticles: totalArticles[0].total_articles || 0,
             totalReaders: totalReaders[0].total_readers || 0,
-            totalAuthors: totalAuthors[0].total_authors || 0, // Added totalAuthors
+            totalAuthors: totalAuthors[0].total_authors || 0, 
             articles: articlesDetails || [],
             categories: categoryCounts || []
         });

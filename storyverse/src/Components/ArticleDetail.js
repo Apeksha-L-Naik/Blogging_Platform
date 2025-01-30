@@ -167,6 +167,9 @@ const ArticleDetails = () => {
             <div className="article-header">
                 <h2 className="article-title">{article.title}</h2>
                 <p className="article-author">By: <span>{article.author_name}</span></p>
+                <div className="view-count">
+                    <span>Views: {viewCount}</span>
+                </div>
             </div>
             <div className="article-cover">
                 <img
@@ -186,9 +189,6 @@ const ArticleDetails = () => {
                     ❤
                 </button>
                 <span className="like-count">{likeCount} - Likes</span>
-                <div className="view-count">
-                    <span>Views: {viewCount}</span>
-                </div>
             </div>
 
             <div className="article-comments-section">

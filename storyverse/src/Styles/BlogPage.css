@@ -1,0 +1,70 @@
+.image-container-blog {
+    position: relative;
+    text-align: center;
+}
+
+/* Welcome text overlay */
+.text-overlay {
+    position: absolute;
+    top: 40%;
+    left: -100%; /* Start the text off-screen to the left */
+    transform: translateY(-50%);
+    color: #333;
+    font-size: 2.5em;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    text-align: left;
+    line-height: 1.4; /* Add spacing between lines */
+    align-items: center;
+    animation: slideInFromLeft 1.5s ease-out forwards; /* Add animation */
+}
+
+/* Explore button */
+.explore-button {
+    background: linear-gradient(to right, #ff9aa2, #ffb6c1); /* Soft pink gradient */
+    color: #333; /* Darker text for better contrast */
+    border: none;
+    padding: 15px 40px;
+    border-radius: 25px;
+    font-size: 1.3em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Playfair Display', serif;
+    position: absolute;
+    top: 60%; /* Position below the text */
+    left: 2%; /* Align with the left-aligned text */
+    transform: translateY(-50%);
+}
+
+/* Button hover effect */
+.explore-button:hover {
+    transform: translateY(-50%) scale(1.05); /* Hover effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Fade-in animation */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Slide-in animation */
+@keyframes slideInFromLeft {
+    from {
+        left: -100%; /* Start off-screen to the left */
+    }
+    to {
+        left: 2%; /* End aligned with the text */
+    }
+}

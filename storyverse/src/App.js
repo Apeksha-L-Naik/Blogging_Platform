@@ -8,15 +8,18 @@ import ArticleDetail from './Components/ArticleDetail';
 import Categories from './Components/Categories';
 import CategoryArticles from './Components/CategoryArticles';
 import Analytics from './Components/Analytics';
+import BlogPage from './Components/BlogPage';
+import Card from './Components/Card';
 
 function App() {
     return (
         <Router>
             <div>
                 <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<BlogPage/>} />
+                <Route path='/cards' element={<Card/>}/>
                     <Route path="/signup" element={<Signup />} />
-                    {/* <Route path="/login" element={<Login />} /> */}
+                    <Route path="/login" element={<Login />} />
                     <Route path='/home' element={<Home/>}/>
                     <Route path="/articles" element={<Articles />} />
                     <Route path="/articles/:id" element={<ArticleDetail />} />

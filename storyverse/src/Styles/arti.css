@@ -1,9 +1,14 @@
 .articles-list {
     display: flex;
-    gap: 40px;
-    padding-top: 40px;
-    align-items: center;
-    justify-content: center;
+    flex-wrap: wrap; /* Allows wrapping to the next line if necessary */
+    gap: 30px; /* Adds spacing between the cards */
+    justify-content: center; /* Centers the cards horizontally */
+}
+
+.articles-list .card {
+    flex: 1 1 calc(25% - 30px); /* Each card takes up 25% width minus gap */
+    max-width: calc(25% - 30px); /* Ensures a maximum width per card */
+    box-sizing: border-box; /* Includes padding and borders in size calculation */
 }
 
 .title {

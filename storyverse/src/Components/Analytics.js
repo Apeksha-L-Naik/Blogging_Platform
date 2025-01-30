@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Pie, Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
-import '../Styles/analytics.css'
+import '../Styles/analytics.css';
 
 const Analytics = () => {
+    const [activeChart, setActiveChart] = useState('performance');
     const [articles, setArticles] = useState([]);
     const [summary, setSummary] = useState({ totalArticles: 0, totalReaders: 0, totalAuthors: 0 });
     const [categories, setCategories] = useState([]);
@@ -44,16 +45,12 @@ const Analytics = () => {
             {
                 label: 'Views',
                 data: articles.map(article => article.views),
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
+                backgroundColor: '#4285F4',
             },
             {
                 label: 'Likes',
                 data: articles.map(article => article.likes),
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
+                backgroundColor: '#FBBC05',
             },
         ],
     };
@@ -64,53 +61,81 @@ const Analytics = () => {
             {
                 label: 'Articles per Category',
                 data: categories.map(category => category.count),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                ],
+                backgroundColor: ['#34A853', '#EA4335', '#FBBC05', '#4285F4'],
             },
         ],
     };
 
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
+    const summaryData = {
+        labels: ['Articles', 'Readers', 'Authors'],
+        datasets: [
+            {
+                data: [summary.totalArticles, summary.totalReaders, summary.totalAuthors],
+                backgroundColor: ['#FF5733', '#33FFBD', '#3375FF'],
             },
-            title: {
-                display: true,
-                text: 'Analytics Overview',
-            },
-        },
+        ],
     };
 
     return (
         <div className="analytics-container">
-            <div className="summary-card">
-                <h1 className="title">Analytics Dashboard</h1>
-                <div className="summary-details">
-                    <p><strong>Total Articles:</strong> {summary.totalArticles}</p>
-                    <p><strong>Total Readers:</strong> {summary.totalReaders}</p>
-                    <p><strong>Total Authors:</strong> {summary.totalAuthors}</p>
+            <h1 className="dashboard-title">Analytics Dashboard</h1>
+
+            {/* Summary Section */}
+            <div className="summary-container">
+                <div className="summary-card">
+                    <h3>Total Articles</h3>
+                    <p>{summary.totalArticles}</p>
+                </div>
+                <div className="summary-card">
+                    <h3>Total Readers</h3>
+                    <p>{summary.totalReaders}</p>
+                </div>
+                <div className="summary-card">
+                    <h3>Total Authors</h3>
+                    <p>{summary.totalAuthors}</p>
                 </div>
             </div>
 
+            {/* Button Group */}
+            <div className="button-group">
+                <button
+                    onClick={() => setActiveChart('performance')}
+                    className={activeChart === 'performance' ? 'active' : ''}
+                >
+                    Performance
+                </button>
+                <button
+                    onClick={() => setActiveChart('category')}
+                    className={activeChart === 'category' ? 'active' : ''}
+                >
+                    Articles by Category
+                </button>
+                <button
+                    onClick={() => setActiveChart('overview')}
+                    className={activeChart === 'overview' ? 'active' : ''}
+                >
+                    Overview
+                </button>
+            </div>
+
+            {/* Chart Section */}
             <div className="charts-container">
-                {articles.length > 0 && (
+                {activeChart === 'performance' && (
                     <div className="chart-card">
-                        <h3>Article Performance</h3>
-                        <Bar data={articleData} options={options} />
+                        <h3>Articles Performance</h3>
+                        <Bar data={articleData} />
                     </div>
                 )}
-
-                {categories.length > 0 && (
+                {activeChart === 'category' && (
                     <div className="chart-card">
                         <h3>Articles by Category</h3>
                         <Pie data={categoryData} />
+                    </div>
+                )}
+                {activeChart === 'overview' && (
+                    <div className="chart-card">
+                        <h3>Overview</h3>
+                        <Doughnut data={summaryData} />
                     </div>
                 )}
             </div>

@@ -10,7 +10,7 @@ const CategoryArticles = () => {
     const [articles, setArticles] = useState([]); // State for storing articles
     const [loading, setLoading] = useState(true); // State for loading status
     const [error, setError] = useState(''); // State for error handling
-        const [searchQuery, setSearchQuery] = useState('');
+      
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -36,11 +36,11 @@ const CategoryArticles = () => {
          
         <div className="unique-articles-container">
             <h2 className='title'>Articles in {categoryId} Category</h2>
-            <div className="articles-list">
+            <div className="articles-list" >
                 {articles.length > 0 ? (
                     articles.map((article) => (
                         <div key={article.article_id} className="unique-article-card">
-                            {/* Display cover image if available */}
+
                             {article.cover_image_url && (
                                 <img
                                     src={`http://localhost:5000/${article.cover_image_url}`}

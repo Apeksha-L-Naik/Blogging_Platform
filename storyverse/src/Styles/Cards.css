@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+/* Card Styling */
+
+.card {
+    width: 300px;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1); /* Inner shadow */
+    text-align: center;
+    background: #fff;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden; /* Ensures header stays within rounded corners */
+    height: 450px;
+}
+
+/* Top Border for Card */
+.card-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px; /* Adjust thickness as needed */
+    background-color: var(--header-color, #4caf50);
+}
+.heading-container {
+    text-align: center;
+    margin-bottom: 30px;
+   
+}
+
+.heading-container h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    animation: fadeDown 1.5s ease-in-out;
+}
+
+.heading-container p {
+    font-size: 1.2rem;
+    color: #666;
+    font-family: 'Playfair Display', serif;
+    animation: fadeDown 1.5s ease-in-out 0.5s;
+}
+
+/* Specific Card Styles with Colored Inner Shadow */
+.login-card {
+    box-shadow: inset 0 4px 8px rgba(76, 175, 80, 0.3); /* Green inner shadow */
+}
+
+.analytics-card {
+    box-shadow: inset 0 4px 8px rgba(244, 67, 54, 0.3); /* Red inner shadow */
+}
+
+/* Specific Card Styles */
+.login-card .card-header {
+    background-color: #4caf50; /* Green */
+}
+
+.analytics-card .card-header {
+    background-color: #f44336; /* Red */
+}
+.card-image-wrapper {
+    border-radius: 15px; /* Match the border radius of the image */
+    overflow: hidden; /* Ensure the shadow doesn't leak outside the wrapper */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    margin-bottom: 15px; /* Space below the image wrapper */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Add hover effect if needed */
+.card:hover .card-image-wrapper {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Intensify shadow on hover */
+    transform: scale(1); /* Slightly enlarge the wrapper */
+}
+/* Shadow effect for green border */
+.login-card .card-image-wrapper {
+    box-shadow: 0 0 15px 2px rgba(76, 175, 80, 0.6); /* Green shadow */
+}
+
+/* Shadow effect for red border */
+.analytics-card .card-image-wrapper {
+    box-shadow: 0 0 15px 2px rgba(244, 67, 54, 0.6); /* Red shadow */
+}
+
+/* Hover effect for all cards */
+.card:hover .card-image-wrapper {
+    box-shadow: 0 0 20px 4px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover */
+    transform: scale(1.05); /* Slightly enlarge the wrapper */
+}
+
+.card h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+    margin-top: 50px; /* Push down text to avoid overlap with header */
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+    margin-top: 30px;
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+/* Button Styling */
+.card-button {
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.3s;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.green-button {
+    background-color: #4caf50; /* Green */
+    color: white;
+    padding: 10px 110px;
+}
+
+.green-button:hover {
+    background-color: #388e3c;
+}
+
+.red-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 10px 75px;
+}
+
+.red-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Card Hover Effects */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Animation for Cards */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Fade-down animation for heading */
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px); /* Starts slightly above */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); /* Ends at its original position */
+    }
+}
